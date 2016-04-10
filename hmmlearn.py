@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # LEARNING HIDDEN MARKOV MODEL FROM TRAINING DATA.
 import sys
+import json
 fname  = sys.argv[1]
 output = 'hmmmodel.txt'
 START  = 'start'
@@ -55,6 +56,13 @@ def getModel():
 #==============================================================================
 def main():
     getModel()
+    data = dict()
+    data['TAG'] = freqTags
+    data['TRANSITION'] = freqTrans
+    data ['Emission'] = Emission
+    data ['Transition'] = Transition
+    with open(output, 'w') as f:
+        json.dump(data, f)
 
 #==============================================================================
 if __name__ == '__main__':
