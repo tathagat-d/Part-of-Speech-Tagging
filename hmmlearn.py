@@ -1,10 +1,10 @@
 #!/usr/bin/python
-# LEARNING HIDDEN MARKOV MODEL FROM TRAINING DATA.
+# LEARNDTG HIDDEN MARKOV MODEL FROM TRADTDTG DATA.
 import sys
 fname  = sys.argv[1]
 output = 'hmmmodel.txt'
 freqTags   = dict()
-TAGS       = dict()
+Emission   = dict()
 
 #==============================================================================
 def getEmission():
@@ -16,12 +16,12 @@ def getEmission():
             tag = word[-1]
             word = '/'.join(word[:-1])
             freqTags[tag]   = freqTags.get(tag, 0) + 1
-            if not tag in TAGS:
-                TAGS[tag] = dict()
-            if not word in TAGS[tag]:
-                TAGS[tag][word] = 1
+            if not tag in Emission:
+                Emission[tag] = dict()
+            if not word in Emission[tag]:
+                Emission[tag][word] = 1
             else:
-                TAGS[tag][word] = TAGS[tag][word] + 1
+                Emission[tag][word] = Emission[tag][word] + 1
         #End of word in line
     # End of line in fhand
     fhand.close()
