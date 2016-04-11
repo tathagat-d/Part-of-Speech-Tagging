@@ -6,8 +6,6 @@ import sys
 
 fname  = sys.argv[1]
 output = 'hmmoutput.txt'
-P      = dict()
-B      = dict()
 # Getting the learned model from the output file. hmmmodel.txt
 #============================================================================== 
 with open('hmmmodel.txt') as f:
@@ -18,6 +16,9 @@ Emission   = data['Emission']
 Transition = data['Transition']
 
 #============================================================================== 
+def tracePath(B):
+    pass
+#==============================================================================
 def computeProbability(t, tag, word):
     r1 = list()
     r2 = list()
@@ -37,6 +38,8 @@ def viterbi(line):
     if not line: return
     line = line.split()
     T    = len(line)
+    P    = dict()
+    B    = dict()
     #==========================================================================e
     # Initialization step at t = 1
     for tag in freqTags:
@@ -58,8 +61,9 @@ def viterbi(line):
     #==========================================================================
     # Termination Step
     # Some code to follow up here
-    for key, value in B.items():
-        print key, value
+    #for key, value in B.items():
+    #    print key, value
+    return tracePath(B)
 
 #============================================================================== 
 #Reading files from the test data one line at a time
