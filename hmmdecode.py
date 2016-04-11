@@ -19,7 +19,7 @@ Transition = data['Transition']
 def tracePath(B):
     pass
 #==============================================================================
-def computeProbability(t, tag, word):
+def computeProbability(P, t, tag, word):
     r1 = list()
     r2 = list()
     for var in freqTags:
@@ -57,7 +57,7 @@ def viterbi(line):
     # Recursion step for the remaining time points
     for t in range(1, T):
         for tag in freqTags:
-            P[tag][t+1], B[tag][t+1] = computeProbability(t, tag, line[t])
+            P[tag][t+1], B[tag][t+1] = computeProbability(P, t, tag, line[t])
     #==========================================================================
     # Termination Step
     # Some code to follow up here
