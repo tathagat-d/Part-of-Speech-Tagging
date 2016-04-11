@@ -30,7 +30,7 @@ def computeProbability(t, tag, word):
         except KeyError:
             r1.append(0)
             r2.append((0, var))
-    return max(r1), max(r2)[1]
+    return max(r1), max(r2)
 
 #==============================================================================
 def viterbi(line):
@@ -42,13 +42,14 @@ def viterbi(line):
     for tag in freqTags:
         P[tag] = dict()
         B[tag] = dict()
-        B[tag][1] = 'start'
         try:
             transition = float(Transition['start'][tag])/freqTrans['start']
             emission   = float(Emission[tag][line[0]])/freqTags[tag]
             P[tag][1] = transition * emission
+            B[tag][1] = (transition, 'start')
         except KeyError:
             P[tag][1] = 0
+            B[tag][1] = (0, 'start')
     #==========================================================================
     # Recursion step for the remaining time points
     for t in range(1, T):
@@ -57,6 +58,8 @@ def viterbi(line):
     #==========================================================================
     # Termination Step
     # Some code to follow up here
+    for key, value in B.items():
+        print key, value
 
 #============================================================================== 
 #Reading files from the test data one line at a time
