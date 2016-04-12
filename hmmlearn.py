@@ -32,7 +32,7 @@ def getTransition(prevPointer, tag):
 def getModel():
     fhand = open(fname, 'r')
     for line in fhand:
-        line = line.strip().decode('utf-8').split()
+        line = line.strip().decode('utf-8', 'ignore').split()
         prevPointer = START
         for word in line:
             word = word.split('/')
