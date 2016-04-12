@@ -11,13 +11,13 @@ freqTrans  = dict()
 Transition = dict()
 
 #==============================================================================
-def getEmission(tag, word):
-    if not tag in Emission:
-        Emission[tag] = dict()
-    if not word in Emission[tag]:
-        Emission[tag][word] = 1
+def getEmission(word, tag):
+    if not word in Emission:
+        Emission[word] = dict()
+    if not tag in Emission[word]:
+        Emission[word][tag] = 1
     else:
-        Emission[tag][word] += 1
+        Emission[word][tag] += 1
 
 #==============================================================================
 def getTransition(prevPointer, tag):
@@ -41,7 +41,7 @@ def getModel():
             #===================================================================
             #Emission Probability
             freqTags[tag]   = freqTags.get(tag, 0) + 1
-            getEmission(tag, word)
+            getEmission(word, tag)
             #===================================================================
             #Transition Probability
             freqTrans[prevPointer]  = freqTrans.get(prevPointer, 0) + 1
@@ -65,9 +65,9 @@ def postProcessing():
             Transition[tag][t] = float(Transition[tag].get(t, 0) + 1) \
                     / (length + freqTrans[tag])
     #==========================================================================
-    for tag in Emission:
-        for word in Emission[tag]:
-            Emission[tag][word] = float(Emission[tag][word]) / freqTags[tag]
+    for word in Emission:
+        for tag in Emission[word]:
+            Emission[word][tag] = float(Emission[word][tag]) / freqTags[tag]
 
 #==============================================================================
 def main():
