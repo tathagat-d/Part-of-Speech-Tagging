@@ -43,8 +43,6 @@ def viterbi(line):
         except KeyError:
             # KeyError is for absense of OBSERVATION for current tag
             P[tag][1] = 0
-        if P[tag][1]:
-            print tag, P[tag][1]
     #==========================================================================
     # Recursion step for the remaining time points
     for t in range(1, T):
@@ -77,7 +75,6 @@ def viterbi(line):
     # End of outermost for loop
     #==========================================================================
     # Termination Step
-    print 'Length:' , length
     mps = None
     most_probable_state = None
     for tag in P:
@@ -85,50 +82,15 @@ def viterbi(line):
             mps = P[tag][length]
             most_probable_state = tag
     #==========================================================================
-    '''
-    print most_probable_state, B[most_probable_state]
-    print 'AQ'
-    print 'NC'
-    print 'SP'
-    print 'NC'
-    print 'SP'
-    print 'CS'
-    print 'VM'
-    print 'PP'
-    print 'NP'
-    print 'FF'
-    print 'NC'
-    print 'DA'
-    print 'VM'
-    print 'PR'
-    print 'NP'
-    print 'CC'
-    print 'NP'
-    print 'NC'
-    print 'PX'
-    print 'DA'
-    print 'SP'
-    print 'NC'
-    print 'DI'
-    print 'SP'
-    '''
     return tracePath(most_probable_state, line, T, B)
 
 #============================================================================== 
 #Reading files from the test data one line at a time
 fhand = open(fname, 'r')
 for line in fhand:
-    line = line.strip()
-    #line = viterbi(line)
+    line = line.strip().decode('utf-8')
     line  = viterbi(line)
     print line
-    #print line
 fhand.close()
 
-'''
-for tag in P:
-    print tag , P[tag]
-for tag in B:
-    print tag , B[tag]
-'''
 #==============================================================================
