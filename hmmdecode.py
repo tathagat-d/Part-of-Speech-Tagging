@@ -3,7 +3,6 @@
 # USE HMM MODEL FROM hmmlearn.py TO TAG UNKNOWN DATA
 import json
 import sys
-import math
 
 fname  = sys.argv[1]
 output = 'hmmoutput.txt'
@@ -27,6 +26,7 @@ def tracePath(s, line, T, B):
 #==============================================================================
 def viterbi(line):
     if not line: return
+    MAGIC= 100
     line = line.split()
     T    = len(line)
     length = T
@@ -40,12 +40,12 @@ def viterbi(line):
         B[tag] = dict()
         B[tag][1] = 'start'
         if not line[0] in Emission:
-            P[tag][1] = math.log(Transition['start'][tag])
+            P[tag][1] = Transition['start'][tag]
         elif tag in Emission[line[0]]:
-            P[tag][1] = math.log(Emission[line[0]][tag]) + \
-                        math.log(Transition['start'][tag])
+            P[tag][1] = Emission[line[0]][tag] * Transition['start'][tag]
         else:
-            P[tag][1] = math.log(2.2250738585072014e-308)
+            P[tag][1] = 0
+        P[tag][1] *= MAGIC
     #==========================================================================
     # Recursion step for the remaining time points
     for t in range(1, T):
@@ -53,7 +53,7 @@ def viterbi(line):
         for tag in Transition:
             if tag == 'start': continue
             #==================================================================
-            P[tag][t+1] = math.log(2.2250738585072014e-308)
+            P[tag][t+1] = 0
             # Unknown Word. Ignore Observation.(This should be in outside loop)
             if not word in Emission:
                 b = 1
@@ -66,11 +66,10 @@ def viterbi(line):
             #==========================================================
             for var in Transition:
                 if var == 'start': continue
-                if P[var][t] == math.log(2.2250738585072014e-308):
-                    temp = math.log(2.2250738585072014e-308)
+                if P[var][t] == 0:
+                    temp = 0
                 else:
-                    temp = P[var][t] + \
-                    math.log(Transition[var][tag]) * math.log(b)
+                    temp = P[var][t] * Transition[var][tag] * b * MAGIC
 
                 if not P[tag][t+1] or P[tag][t+1] < temp:
                     P[tag][t+1] = temp
