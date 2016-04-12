@@ -10,8 +10,8 @@ output = 'hmmoutput.txt'
 #============================================================================== 
 with open('hmmmodel.txt') as f:
     data = json.load(f)
-freqTags   = data['TAG']
-freqTrans  = data['TRANSITION']
+#freqTags   = data['TAG']
+#freqTrans  = data['TRANSITION']
 Emission   = data['Emission']
 Transition = data['Transition']
 
@@ -20,18 +20,25 @@ def tracePath(B):
     pass
 #==============================================================================
 def computeProbability(P, t, tag, word):
-    r1 = list()
-    r2 = list()
-    for var in freqTags:
-        try:
-            transition = float(Transition[var][tag])/freqTrans[var]
-            emission   = float(Emission[tag][word])/freqTags[tag]
-            r1.append(P[var][t] * transition * emission)
-            r2.append((P[var][t] * transition, var))
-        except KeyError:
-            r1.append(0)
-            r2.append((0, var))
-    return max(r1), max(r2)
+    maximum = None
+    pointer = None
+    try:
+        b   = Emission[word][tag]
+    except KeyError:
+        b   = 1
+    #==========================================================================e
+    for var in Transition:
+        if var == 'start': continue
+        if P[var][t] == 0:
+            temp = 0
+        else:
+            temp = b * P[var][t] * Transition[var][tag]
+
+        if not maximum or maximum < temp:
+            maximum = temp
+            pointer = var
+    #==========================================================================e
+    return maximum, pointer
 
 #==============================================================================
 def viterbi(line):
@@ -42,26 +49,30 @@ def viterbi(line):
     B    = dict()
     #==========================================================================e
     # Initialization step at t = 1
-    for tag in freqTags:
+    for tag in Transition:
+        if tag == 'start': continue
         P[tag] = dict()
         B[tag] = dict()
         try:
-            transition = float(Transition['start'][tag])/freqTrans['start']
-            emission   = float(Emission[tag][line[0]])/freqTags[tag]
-            P[tag][1] = transition * emission
-            B[tag][1] = (transition, 'start')
+            P[tag][1] = Emission[line[0]][tag] * Transition['start'][tag]
+            B[tag][1] = 'start'
         except KeyError:
+            # KeyError is for absense of OBSERVATION for current tag
             P[tag][1] = 0
-            B[tag][1] = (0, 'start')
     #==========================================================================
     # Recursion step for the remaining time points
     for t in range(1, T):
-        for tag in freqTags:
-            P[tag][t+1], B[tag][t+1] = computeProbability(P, t, tag, line[t])
+        for tag in Transition:
+            if tag == 'start': continue
+            # If the previous tag was zero, its a dead path
+            if P[tag][t] == 0:
+                P[tag][t+1] = 0
+            else:
+                P[tag][t+1], B[tag][t+1] = computeProbability(P, t, tag, line[t])
     #==========================================================================
     # Termination Step
     # Some code to follow up here
-    #for key, value in B.items():
+    #for key, value in P.items():
     #    print key, value
     return tracePath(B)
 
@@ -71,6 +82,7 @@ fhand = open(fname, 'r')
 for line in fhand:
     line = line.strip()
     viterbi(line)
+fhand.close()
 
 '''
 for tag in P:
