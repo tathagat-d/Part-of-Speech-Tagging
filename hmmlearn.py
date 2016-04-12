@@ -54,8 +54,31 @@ def getModel():
     fhand.close()
 
 #==============================================================================
+# Turning Frequency into Probability
+def postProcessing():
+    for tag in Transition:
+        for t in Transition:
+            # Ignoring Start
+            if t == 'start': continue
+            length = len(freqTrans) - 1
+            # Thats an end of line delimiter ignoring
+            Transition[tag][t] = float(Transition[tag].get(t, 0) + 1) \
+                    / (length + freqTrans[tag])
+    #==========================================================================
+    for tag in Emission:
+        for word in Emission[tag]:
+            Emission[tag][word] = float(Emission[tag][word]) / freqTags[tag]
+
+#==============================================================================
 def main():
     getModel()
+    postProcessing()
+    data = dict()
+    data ['Emission'] = Emission
+    data ['Transition'] = Transition
+    with open(output, 'w') as f:
+        json.dump(data, f)
+    '''
     data = dict()
     data['TAG'] = freqTags
     data['TRANSITION'] = freqTrans
@@ -63,6 +86,7 @@ def main():
     data ['Transition'] = Transition
     with open(output, 'w') as f:
         json.dump(data, f)
+    '''
 
 #==============================================================================
 if __name__ == '__main__':
